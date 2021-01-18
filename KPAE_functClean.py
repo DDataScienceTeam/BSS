@@ -83,8 +83,8 @@ def makeDataloader(data, colDrop = [], testSamples = 30, batchSize = 4):
     
     return dataloaderTrain, dataloaderVal, np.max(mag), np.max(freq)
 
-def makeModelItems(lr = 1e-3, midSize = 16, smallSize = 10):
-    model = FC_AE(midSize = midSize, lowSize = smallSize)
+def makeModelItems(lr = 1e-3, midSize = 16, smallSize = 10, inSize = 16):
+    model = FC_AE(midSize = midSize, lowSize = smallSize, inSize = inSize)
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
     criterion = nn.MSELoss()
     return model, optimizer, criterion
