@@ -43,10 +43,10 @@ class kPeaksDataset(object):
 
 #%% Autoencoder function
 class FC_AE(nn.Module):
-    def __init__(self, midSize = 10, lowSize = 3):
+    def __init__(self, inSize = 16,midSize = 10, lowSize = 3):
         super().__init__()
         self.encoder = nn.Sequential(
-                nn.Linear(in_features=20, out_features=midSize),
+                nn.Linear(in_features=inSize, out_features=midSize),
                 nn.ReLU(True),
                 nn.Linear(in_features=midSize, out_features=lowSize),
                 nn.ReLU(True)
@@ -54,7 +54,7 @@ class FC_AE(nn.Module):
         self.decoder = nn.Sequential(     
                 nn.Linear(in_features=lowSize, out_features=midSize),
                 nn.ReLU(True),
-                nn.Linear(in_features=midSize, out_features=20),
+                nn.Linear(in_features=midSize, out_features=inSize),
                 )
     def forward(self,x):
         y = self.encoder(x)
