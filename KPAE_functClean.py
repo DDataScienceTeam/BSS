@@ -89,7 +89,7 @@ def makeModelItems(lr = 1e-3, midSize = 16, smallSize = 10, inSize = 16):
     criterion = nn.MSELoss()
     return model, optimizer, criterion
 
-def trainModel(dataloaderTrain, dataloaderVal, model, optimizer, criterion, numEpochs = 10, iteration = '1'):
+def trainModel(dataloaderTrain, dataloaderVal, model, optimizer, criterion, numEpochs = 10, iteration = '1', plot = True):
     lossOverEpochs = []
     valLossOverEpochs = []
     for epoch in range(numEpochs):
@@ -119,9 +119,10 @@ def trainModel(dataloaderTrain, dataloaderVal, model, optimizer, criterion, numE
         #Validate results
         valLoss, predictArray, lossArray, inputArray = ValTest(dataloaderVal, model, criterion, finalEval = False)
         valLossOverEpochs.append(valLoss)
-    plt.figure()
-    plt.plot(valLossOverEpochs)
-    plt.title('Iteration: ' + iteration + 'Lowest Loss = '+ str(min(valLossOverEpochs)))
+    if plot:
+        plt.figure()
+        plt.plot(valLossOverEpochs)
+        plt.title('Iteration: ' + iteration + 'Lowest Loss = '+ str(min(valLossOverEpochs)))
     # plt.ylim([0,0.07])
     return model, valLossOverEpochs
 
