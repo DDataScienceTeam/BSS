@@ -55,3 +55,44 @@ def kPeaks(wave, numPeaks = 3, width = 20, minProminence = 1, minHeightDivider =
         prom = []
         
     return peaks, prom
+
+def bucketData(specPdf, numBuckets = 32, aggType = 'max', spectrumLen = 512):
+    #Function description: takes in spectrum data, returns bucketed data using numBuckets as the number of buckets and the aggType determines how they are aggregated
+    #Returns spark dataframe with result
+    bucketWidth = int(spectrumLen/numBuckets)
+
+    #For each deviceID, calculate bucket values and append into one dataframe
+    for j,(name,group) in enumerate(specPdf.groupby('deviceID')):
+        bucketMatrix = np.array([]) #for this one ID
+        timestamp = group['timestamp'].values
+        data = group.drop(['deviceID', 'timestamp'], axis = 1) #Just spectrum values
+        for row in range(group.shape[0]): #For each spectrum reading
+            singleRow = data.iloc[row]
+            bucketList = []
+            for i in range(0,spectrumLen, bucketWidth): #For each bucket in the one reading
+                if aggType == 'mean':
+                    bucketVal = np.mean(singleRow[i:i+bucketWidth])
+                else:
+                    bucketVal = np.max(singleRow[i:i+bucketWidth])
+                bucketList.append(bucketVal)
+            bucketArray = np.array([bucketList])
+
+            if row == 0:
+                bucketMatrix = bucketArray
+            else:
+                bucketMatrix = np.concatenate((bucketMatrix, bucketArray), axis = 0)
+        
+        #Join the deviceID and time info onto the bucket information
+        nameArray = np.transpose(np.array([[name for i in range(bucketMatrix.shape[0])]]))
+        npTime = np.transpose(np.array([timestamp]))
+        nameTimeArray = np.concatenate((nameArray, npTime), axis=1)
+        bucketMatrix = np.concatenate((nameTimeArray, bucketMatrix), axis=1)
+        
+        #Join matrix onto previous ones to create one large matrix
+        if j ==0:
+            fullMatrix = bucketMatrix
+        else:
+            fullMatrix = np.concatenate((fullMatrix, bucketMatrix), axis = 0)
+    bucketPdf = pd.DataFrame(fullMatrix, columns = ['deviceID', 'timestamp']+[str(i) for i in range(numBuckets)])
+    bucketDf = spark.createDataFrame(bucketPdf)
+    return bucketDf
