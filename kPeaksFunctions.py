@@ -56,7 +56,7 @@ def kPeaks(wave, numPeaks = 3, width = 20, minProminence = 1, minHeightDivider =
         
     return peaks, prom
 
-def bucketData(specPdf, numBuckets = 32, aggType = 'max', spectrumLen = 512):
+def bucketData(specPdf, numBuckets = 32, aggType = 'max', spectrumLen = 512, colToDrop = ['deviceID', 'timestamp']):
     #Function description: takes in spectrum data, returns bucketed data using numBuckets as the number of buckets and the aggType determines how they are aggregated
     #Returns spark dataframe with result
     bucketWidth = int(spectrumLen/numBuckets)
@@ -65,7 +65,7 @@ def bucketData(specPdf, numBuckets = 32, aggType = 'max', spectrumLen = 512):
     for j,(name,group) in enumerate(specPdf.groupby('deviceID')):
         bucketMatrix = np.array([]) #for this one ID
         timestamp = group['timestamp'].values
-        data = group.drop(['deviceID', 'timestamp'], axis = 1) #Just spectrum values
+        data = group.drop(colToDrop, axis = 1) #Just spectrum values
         for row in range(group.shape[0]): #For each spectrum reading
             singleRow = data.iloc[row]
             bucketList = []
