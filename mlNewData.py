@@ -16,7 +16,7 @@ def gmmNewData(peaksByPeaks,gmmDf, startDate, endDate, durationStr):
     #Unpack order for gmmList: clf, scaler, liklihood_thresh threshold
     mlDonutPdf = pd.DataFrame([], columns = ['deviceID', 'timeRecord','durationStr', 'mlGood', 'mlWarning', 'mlBad', 'mlScore'])
     for j, (name, group) in enumerate(peaksByPeaksPdf.groupby('deviceID')):
-        descript = np.array([name, rounded.date(), durationStr])
+        descript = np.array([name, endDate.date(), durationStr])
         print(name, group.shape[0])
         gmmCol = name.replace(" ", "")
         gmmPickle = gmmPdf[gmmCol].iloc[0]
