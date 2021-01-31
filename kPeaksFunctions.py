@@ -32,11 +32,12 @@ def movingAvCust(x, w = 6, ss = 1):
     return np.array(smoothedX)
 
 #%%k peaks finder
-def kPeaks(wave, numPeaks = 3, width = 20, minProminence = 1, minHeightDivider = 5):
+def kPeaks(wave, numPeaks = 0, width = 20, minProminence = 1, minHeightDivider = 5):
     
     #get peaks
     peaks, prop = find_peaks(wave, distance=width, prominence = (minProminence, None))
-    if len(peaks) != 0:
+    print(peaks)
+        if len(peaks) != 0:
         prom = prop['prominences']
         
         #Get max height and threshold out low peaks
@@ -47,9 +48,14 @@ def kPeaks(wave, numPeaks = 3, width = 20, minProminence = 1, minHeightDivider =
         peaks = peaks[goodPeaks]
         prom = prom[goodPeaks]
         
-        
-        #Find top 3 from this based on prominence
-    #    topPeaks = np.sort(peaks[np.argsort(prom)[-numPeaks:]])
+        # Find top numPeaks from this based on prominence unless numPeaks = 0
+        if numPeaks != 0:
+            topPeaks = np.sort(peaks[np.argsort(prom)[-numPeaks:]])
+            topProm = []
+            for i in topPeaks:
+                topProm.append(prom[peaks[i]])
+            peaks = topPeaks
+            prom = topProm
     else:
         peaks = []
         prom = []
@@ -100,12 +106,7 @@ def bucketData(specPdf, numBuckets = 32, aggType = 'max', spectrumLen = 512, col
 ###############################################
 #Functions to generate the peaks data by peaks
 ###############################################
-def peaksData(specPdf):
-    widthK = 20
-    width = 10
-    stepSize = 5
-    promSF = 5
-    spectrumLen = 512
+def peaksData(specPdf, widthK = 20, width = 10, stepSize = 5, promSF = 5, spectrumLen = 512):
 
     outputList = []
     outputNames = []
