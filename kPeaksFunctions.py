@@ -52,7 +52,7 @@ def kPeaks(wave, numPeaks = 0, width = 20, minProminence = 1, minHeightDivider =
             topPeaks = np.sort(peaks[np.argsort(prom)[-numPeaks:]])
             topProm = []
             for i in topPeaks:
-                topProm.append(prom[peaks(i)])
+                topProm.append(prom[peaks[i]])
             peaks = topPeaks
             prom = topProm
     else:
