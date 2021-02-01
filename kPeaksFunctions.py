@@ -36,8 +36,7 @@ def kPeaks(wave, numPeaks = 0, width = 20, minProminence = 1, minHeightDivider =
     
     #get peaks
     peaks, prop = find_peaks(wave, distance=width, prominence = (minProminence, None))
-    print(peaks)
-        if len(peaks) != 0:
+    if len(peaks) != 0:
         prom = prop['prominences']
         
         #Get max height and threshold out low peaks
@@ -47,15 +46,17 @@ def kPeaks(wave, numPeaks = 0, width = 20, minProminence = 1, minHeightDivider =
         goodPeaks = np.where(wave[peaks]> minNormHeight)
         peaks = peaks[goodPeaks]
         prom = prom[goodPeaks]
-        
-        # Find top numPeaks from this based on prominence unless numPeaks = 0
+        print(type(peaks))
+
+            # Find top numPeaks from this based on prominence unless numPeaks = 0
         if numPeaks != 0:
             topPeaks = np.sort(peaks[np.argsort(prom)[-numPeaks:]])
             topProm = []
             for i in topPeaks:
-                topProm.append(prom[peaks[i]])
+                topProm.append(prom[peaks.tolist().index(i)])
             peaks = topPeaks
             prom = topProm
+
     else:
         peaks = []
         prom = []
