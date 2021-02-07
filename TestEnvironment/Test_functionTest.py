@@ -1,0 +1,1 @@
+print('harry is smart')
