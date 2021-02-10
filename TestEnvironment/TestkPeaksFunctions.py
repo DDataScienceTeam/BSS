@@ -146,6 +146,10 @@ def peaksData(specPdf, widthK = 20, width = 10, stepSize = 5, promSF = 5, spectr
         
 
     finalPdf = finalPdf.replace(['a84041000181a5f1', 'a84041000181a5ca','a84041000181a5c3','a84041000181cc92','a84041000181cc98','a84041000181cc9e'],['Blower 1', 'Blower 2', 'Blower 3', 'Blower 4', 'Blower 5', 'Blower 6'])
+    
+    # add in Invalid boolean, default 0, meaning valid
+    finalPdf['Invalid'] = 0
+
     #Drop the rows of small magnitudes
     finalPdfNosmall = finalPdf.loc[finalPdf.magnitude > 0.2]
 
