@@ -1,3 +1,11 @@
+# -*- coding: utf-8 -*-
+"""
+Compiled on mon Feb 15 2021
+
+@author: Harry Bowman & Jack Byrne (compiler)
+"""
+# Functions which produce visuals for BlueScope PowerBIDashborad
+
 def waterFallPrep(specPdf):
 	from datetime import datetime
 	blowerList = ['Blower '+str(i+1) for i in range(6)]
