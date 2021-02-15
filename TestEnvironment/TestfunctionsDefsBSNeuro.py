@@ -22,7 +22,7 @@ class UNetModel1D(torch.nn.Module):
         self.outputs = 1
         self.mean = 0
         self.std = 0
-        print(scale_size)
+        #print(scale_size)
         
         for i in range(self.n_levels):
             self.enc_layers.append(torch.nn.ModuleList())

@@ -11,13 +11,13 @@ def gmmNewData(peaksByPeaks,gmmDf, startDate, endDate, durationStr):
     peaksByPeaksFilt = peaksByPeaks.filter(peaksByPeaks.timestamp > startDate)
     peaksByPeaksFilt2 = peaksByPeaksFilt.filter( peaksByPeaksFilt.timestamp < endDate)
     peaksByPeaksPdf = peaksByPeaksFilt2.toPandas()
-    print(peaksByPeaksPdf.shape)
+    #print(peaksByPeaksPdf.shape)
     gmmPdf = gmmDf.toPandas()
     #Unpack order for gmmList: clf, scaler, liklihood_thresh threshold
     mlDonutPdf = pd.DataFrame([], columns = ['deviceID', 'timeRecord','durationStr', 'mlGood', 'mlWarning', 'mlBad', 'mlScore'])
     for j, (name, group) in enumerate(peaksByPeaksPdf.groupby('deviceID')):
         descript = np.array([name, endDate.date(), durationStr])
-        print(name, group.shape[0])
+        #print(name, group.shape[0])
         gmmCol = name.replace(" ", "")
         gmmPickle = gmmPdf[gmmCol].iloc[0]
         gmmList = pickle.loads(gmmPickle)
@@ -41,6 +41,6 @@ def gmmNewData(peaksByPeaks,gmmDf, startDate, endDate, durationStr):
 #         print(row)
         rowDf = pd.DataFrame([row], columns = ['deviceID', 'timeRecord','durationStr', 'mlGood', 'mlWarning', 'mlBad', 'mlScore'])
         mlDonutPdf = mlDonutPdf.append(rowDf)
-        print(percentOutlier)
+        #print(percentOutlier)
 #     mlDonutDf = spark.createDataFrame(mlDonutPdf)
     return mlDonutPdf

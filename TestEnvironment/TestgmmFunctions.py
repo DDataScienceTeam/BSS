@@ -92,7 +92,7 @@ def gmmPredict(data, clf, scaler, likelihood_threshold, titleVal = 'PROVIDE TITL
         percentOutlier = numOutlier/len(data) * 100
     else:
         percentOutlier = np.mean(prob,0)
-    print('a')
+    #print('a')
     if plot:
         print('b')
         ######################################
@@ -138,7 +138,7 @@ def anomVal(loss, timeData = 'k', anomThresh = 15, anomThreshNeg = 2, numStd = 4
     lossTrain = loss[:trainLen]
     lossVal = loss[trainLen:valLen]
     lossTest = loss[valLen:]
-    print(valLen+trainLen)
+    #print(valLen+trainLen)
     # print('loss = ', loss)
     #generate Threshold
     lossThresh = np.mean(lossVal) + numStd*np.std(lossVal)+5

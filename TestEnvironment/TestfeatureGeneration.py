@@ -9,7 +9,7 @@ def peaksByPeaks(specPdf):
     outputNames = []
 
     for j,(name,group) in enumerate(specPdf.groupby('deviceID')):
-        print(name)
+        #print(name)
         outputNames.append(name)
         freqVector = np.array([])
         magVector = np.array([])
@@ -29,8 +29,8 @@ def peaksByPeaks(specPdf):
         freqVector  =freqVector * 100
         data= np.column_stack((magVector, freqVector))
         output = pd.DataFrame(data, columns = ['magnitude', 'frequency'])
-        print('otuptu = ',len(magVector))
-        print('timeVector = ',len(timeVector))
+        #print('otuptu = ',len(magVector))
+        #print('timeVector = ',len(timeVector))
         output['timestamp'] = timeVector
         output['deviceID'] = name
         outputDf = spark.createDataFrame(output)

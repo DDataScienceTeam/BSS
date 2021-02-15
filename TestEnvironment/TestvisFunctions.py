@@ -18,7 +18,7 @@ def waterFallPrep(specPdf):
 	        else:
 	            dataFull = np.concatenate((dataFull, np.expand_dims(dataMean, axis=0)), axis=0)
 	            
-	print(dataFull.shape)
+	#print(dataFull.shape)
 	columns = ['deviceID'] + [str(i) for i in range(512)] + ['timestamp']
 	a = pd.DataFrame(dataFull, columns = columns)
 	latestSpecsDf = bucketData(a, numBuckets = 16)

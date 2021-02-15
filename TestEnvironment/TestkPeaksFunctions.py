@@ -46,7 +46,7 @@ def kPeaks(wave, numPeaks = 0, width = 20, minProminence = 1, minHeightDivider =
         goodPeaks = np.where(wave[peaks]> minNormHeight)
         peaks = peaks[goodPeaks]
         prom = prom[goodPeaks]
-        print(type(peaks))
+        #print(type(peaks))
 
             # Find top numPeaks from this based on prominence unless numPeaks = 0
         if numPeaks != 0:
@@ -113,7 +113,7 @@ def peaksData(specPdf, widthK = 20, width = 10, stepSize = 5, promSF = 5, spectr
     outputNames = []
 
     for j,(name,group) in enumerate(specPdf.groupby('deviceID')):
-        print(name)
+        #print(name)
         outputNames.append(name)
         freqVector = np.array([])
         magVector = np.array([])
@@ -133,8 +133,8 @@ def peaksData(specPdf, widthK = 20, width = 10, stepSize = 5, promSF = 5, spectr
         freqVector  =freqVector * 100
         data= np.column_stack((magVector, freqVector))
         output = pd.DataFrame(data, columns = ['magnitude', 'frequency'])
-        print('otuptu = ',len(magVector))
-        print('timeVector = ',len(timeVector))
+       # print('otuptu = ',len(magVector))
+        #print('timeVector = ',len(timeVector))
         output['timestamp'] = timeVector
         output['deviceID'] = name
         outputDf = spark.createDataFrame(output)
