@@ -370,3 +370,59 @@ def deviceTests(startTime, endTime, metaDf, specDf,durationStr):
     deviceDonutPdf['BattVals'] = [(str(round(i,1))+'V') for i in battList]
     deviceDonutPdf['DataLevels'] = ingestList #ITS A COUNT
     return deviceDonutPdf
+
+
+#-----------------------------------------------------------------------------------------------
+# Takes in a Sparks Dataframe and takes some condition from another sparks data frame's column and toggles if data row is valid
+# The output will be the Df with an updated Invalid column of 0 or 1
+# Most parametres are pre-determined for the case of checking data against a 16000 battery charge, but can be changed
+#------------------------------------------------------------------------------------------------
+def CompInvalid(Df, ComparisonDf, deviceCols = 'deviceID', timestampCols = 'timestamp', ComparisonCols = 'battery', scaler = 1/1000, NegThreshold = True, Threshold = 16):
+    Pdf = Df.toPandas()
+    Pdf['date'] = pd.to_datetime(Pdf[timestampCols], format="%Y-%m-%dT%H:%M:%S.%fZ").dt.date # only concerned with date not timestamp
+    if 'Invalid' not in Pdf.columns:
+        Pdf['Invalid']= 0
+        
+    ComparisonPdf = ComparisonDf.toPandas()
+    ComparisonPdf['date'] = pd.to_datetime(ComparisonPdf[timestampCols], format="%Y-%m-%dT%H:%M:%S.%fZ").dt.date 
+    
+    if 'Invalid' not in ComparisonPdf.columns:
+        ComparisonPdf['Invalid']= 0
+    
+    ComparisonPdf = ComparisonPdf.join(ComparisonPdf.groupby([deviceCols, 'date'])[ComparisonCols].mean(),on=[deviceCols, 'date'], rsuffix='_avg') # averages on date
+    ComparisonPdf[ComparisonCols+'_div'] = ComparisonPdf[ComparisonCols+'_avg']*scaler
+    
+    if NegThreshold==True:
+        ComparisonPdf.loc[(ComparisonPdf[ComparisonCols+'_div']<Threshold), 'Invalid'] = 1
+    elif NegThreshold==False:
+        ComparisonPdf.loc[(ComparisonPdf[ComparisonCols+'_div']>=Threshold), 'Invalid'] = 1
+    else:
+        return print('NegThreshold has an error')
+        
+    Pdf = Pdf.merge(ComparisonPdf[[deviceCols, 'date', 'Invalid']], on=[deviceCols, 'date'], how='left', suffixes=(None, '_meta'))
+    Pdf['Invalid'] = Pdf['Invalid']+Pdf['Invalid_meta']
+    Pdf = Pdf.drop(['date', 'Invalid_meta'], axis=1)
+    Output = spark.createDataFrame(Pdf)
+    return Output
+
+#-----------------------------------------------------------------------------------------------
+# Takes in a Sparks Dataframe and takes some datetime.date condition oggles if data row is valid
+# The output will be the Df with an updated Invalid column of 0 or 1
+# Most parametres are pre-determined for the case of checking data against a 16000 battery charge, but can be changed
+#------------------------------------------------------------------------------------------------
+def TimeInvalid(Df, date, deviceCols = 'deviceID', timestampCols = 'timestamp', before=True):
+    Pdf = Df.toPandas()
+    Pdf['date'] = pd.to_datetime(Pdf[timestampCols], format="%Y-%m-%dT%H:%M:%S.%fZ").dt.date # only concerned with date not timestamp
+    if 'Invalid' not in Pdf.columns:
+        Pdf['Invalid']= 0
+    
+    if before==True:
+        Pdf.loc[(Pdf['date']<date),'Invalid'] = 1
+    elif before==False:
+        Pdf.loc[(Pdf['date']>date),'Invalid'] = 1
+    else:
+        return print('before has an error')
+    
+    Pdf = Pdf.drop(['date'], axis=1)
+    Output = spark.createDataFrame(Pdf)
+    return Output   
