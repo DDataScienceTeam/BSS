@@ -105,7 +105,7 @@ def TableCopy(SourceTable, Database, ST_Pdf, Delete = False, Test = False):
     else:
         CopyName = SourceTable
     table_def=sm.table_definition(cols, 'Processed', file_type='delta')
-    sm.create_table('BluescopeReporting','junk_test', table_def)
+    sm.create_table(Database,CopyName, table_def)
 
 
 #------------------------------------------------------------------
