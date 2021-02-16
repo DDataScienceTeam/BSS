@@ -4,23 +4,6 @@
 
 #@author: Harry Bowman
 #"""
-from scipy.stats import gaussian_kde
-from scipy.optimize import minimize_scalar
-from sklearn.preprocessing import MinMaxScaler as dataScaler
-from sklearn.mixture import GaussianMixture as GM
-from sklearn.metrics import silhouette_score as silScore
-from sklearn.metrics import davies_bouldin_score as dbScore
-import numpy as np
-import matplotlib.pyplot as plt
-import pandas as pd
-import matplotlib.cm as cm
-from scipy.special import logsumexp
-import pickle
-import pyodbc
-from datetime import date
-from datetime import datetime
-from datetime import timedelta as td
-
 
 
 def gmmFit(data, numMixRange = 10, scoreToUse = 'sil', threshold=0.9, mixToUse = 0):

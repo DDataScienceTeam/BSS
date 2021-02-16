@@ -5,18 +5,16 @@
 #@author: Harry Bowman
 #"""
 
-import numpy as np
-import csv
-import os
-import math
-import matplotlib.pyplot as plt
-from scipy.fftpack import fft, fftfreq
-from scipy.signal import find_peaks
-from sklearn.svm import OneClassSVM
-#import scipy.fft
-import pandas as pd
-
-
+from scipy.stats import gaussian_kde
+from scipy.optimize import minimize_scalar
+from sklearn.preprocessing import MinMaxScaler as dataScaler
+from sklearn.mixture import GaussianMixture as GM
+from sklearn.metrics import silhouette_score as silScore
+from sklearn.metrics import davies_bouldin_score as dbScore
+import matplotlib.cm as cm
+from scipy.special import logsumexp
+import pickle
+import pyodbc
 
 #%%FFT Function
 def getFFT(sample, axisLen = 2048):
