@@ -11,7 +11,6 @@
 # Function to output the waterfall spectrum diagram. 
 #-------------------------------------------------------------------
 def waterFallPrep(specPdf):
-	from datetime import datetime
 	blowerList = ['Blower '+str(i+1) for i in range(6)]
 	b = specPdf
 	dateObj = (pd.to_datetime(b['timestamp'])).dt
