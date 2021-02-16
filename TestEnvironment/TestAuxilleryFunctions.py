@@ -5,12 +5,6 @@ Created on Monday 15 Feb 2021
 @author: Jack Byrne
 """
 
-from neuro_python.neuro_compute import spark_manager as spm
-import neuro_python.neuro_compute.notebook_manager as notebook_manager
-from neuro_python.neuro_data import schema_manager as sm
-from neuro_python.neuro_data import sql_query as sq
-from neuro_python.neuro_data import sql_commands as sc
-import re
 import plotly.plotly as py
 import plotly.graph_objs as pgo
 import numpy as np
