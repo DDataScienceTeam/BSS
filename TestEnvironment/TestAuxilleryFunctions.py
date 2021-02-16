@@ -5,16 +5,6 @@
 #@author: Jack Byrne
 #"""
 
-import plotly.plotly as py
-import plotly.graph_objs as pgo
-import numpy as np
-import matplotlib.pyplot as plt
-from IPython.display import clear_output, display
-import ipywidgets as widgets
-import datetime as dt
-import math
-import time
-
 #------------------------------------------------------------------
 # Function to find key against its values. 
 # In this context used to convert the datatypes into neuroverse friendly
