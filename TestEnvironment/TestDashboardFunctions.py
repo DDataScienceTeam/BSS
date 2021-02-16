@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-"""
-Compiled on mon Feb 15 2021
+#"""
+#Compiled on mon Feb 15 2021
 
-@author: Harry Bowman & Jack Byrne (compiler)
-"""
+#@author: Harry Bowman & Jack Byrne (compiler)
+#"""
 # Functions which produce visuals for BlueScope PowerBIDashborad
 
 def waterFallPrep(specPdf):

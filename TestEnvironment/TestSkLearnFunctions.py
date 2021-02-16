@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Tue Nov 17 14:11:13 2020
+#"""
+#Created on Tue Nov 17 14:11:13 2020
 
-@author: Harry Bowman
-"""
+#@author: Harry Bowman
+#"""
 from scipy.stats import gaussian_kde
 from scipy.optimize import minimize_scalar
 from sklearn.preprocessing import MinMaxScaler as dataScaler

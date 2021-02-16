@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Thu Nov 19 11:36:56 2020
+#"""
+#Created on Thu Nov 19 11:36:56 2020
 
-@author: Harry Bowman
-"""
+#@author: Harry Bowman
+#"""
 
 import numpy as np
 import csv

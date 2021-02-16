@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Thu Nov 19 08:07:21 2020
+#"""
+#Created on Thu Nov 19 08:07:21 2020
 
-@author: Harry Bowman
-"""
+#@author: Harry Bowman
+#"""
 import torch
 import torchvision as tv
 import torchvision.transforms as transforms
