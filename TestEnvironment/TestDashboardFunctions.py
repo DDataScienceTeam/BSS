@@ -131,8 +131,7 @@ def simpleBlowerTests(startTime, endTime, vThreshDf, metaDf, durationStr):
         else:
             tempArr = np.array([1,0,0])
 
-        cardVals = np.array([round(group['Velocity'].iloc[0], 2), (str(math.floor(group['temperature'].iloc[0]))+'°')])
-
+        cardVals = np.array(Decimal([round(group['Velocity'].iloc[0], 2), (str(math.floor(group['temperature'].iloc[0]))+'°')])
         x = np.append(descript, tempArr)
         y = np.append(x, velArr)
         row = np.append(y, cardVals)
