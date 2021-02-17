@@ -131,13 +131,13 @@ def simpleBlowerTests(startTime, endTime, vThreshDf, metaDf, durationStr):
         else:
             tempArr = np.array([1,0,0])
 
-        cardVals = np.array([float(round(group['Velocity'].iloc[0], 2)), (str(math.floor(group['temperature'].iloc[0]))+'°')])
+        cardVals = np.array([round(group['Velocity'].iloc[0], 2), (str(math.floor(group['temperature'].iloc[0]))+'°')])
         x = np.append(descript, tempArr)
         y = np.append(x, velArr)
         row = np.append(y, cardVals)
         rowDf = pd.DataFrame([row], columns = ['deviceID', 'timeRecord', 'durationStr','tempGood', 'tempWarning', 'tempBad','velGood', 'velWarning', 'velBad', 'velCard', 'tempCard'])
         donutPdf = donutPdf.append(rowDf)
-
+    donutPdf['velCard'].to_numeric(downcast='float')
         
 #     donutDf = spark.createDataFrame(donutPdf)
     return donutPdf
