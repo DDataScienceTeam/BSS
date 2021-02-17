@@ -137,8 +137,7 @@ def simpleBlowerTests(startTime, endTime, vThreshDf, metaDf, durationStr):
         row = np.append(y, cardVals)
         rowDf = pd.DataFrame([row], columns = ['deviceID', 'timeRecord', 'durationStr','tempGood', 'tempWarning', 'tempBad','velGood', 'velWarning', 'velBad', 'velCard', 'tempCard'])
         donutPdf = donutPdf.append(rowDf)
-    donutPdf['velCard'].to_numeric(downcast='float')
-        
+    donutPdf['velCard'] = pd.to_numeric(donutPdf['velCard'], downcast='float')        
 #     donutDf = spark.createDataFrame(donutPdf)
     return donutPdf
 
