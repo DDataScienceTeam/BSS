@@ -11,30 +11,30 @@
 # Function to output the waterfall spectrum diagram. 
 #-------------------------------------------------------------------
 def waterFallPrep(specPdf):
-	blowerList = ['Blower '+str(i+1) for i in range(6)]
-	b = specPdf
-	dateObj = (pd.to_datetime(b['timestamp'])).dt
-	day = dateObj.day
-	month = dateObj.month
-	year = dateObj.year
-	dayVal = day + month*31 + (year-2020)*365
-	b['dayVal'] = dayVal
-	for blower in blowerList:
-	    c = b.loc[b['deviceID']==blower]
-	    for j,(dayVal,group) in enumerate(c.groupby('dayVal')):
-	        dataMean = group.mean(axis=0).values
-	        dataMean = np.concatenate((np.array([blower]), dataMean), axis=0)
-	        if blower == 'Blower 1' and j==0:
-	            dataFull = np.expand_dims(dataMean, axis=0)
-	        else:
-	            dataFull = np.concatenate((dataFull, np.expand_dims(dataMean, axis=0)), axis=0)
-	            
-	#print(dataFull.shape)
-	columns = ['deviceID'] + [str(i) for i in range(512)] + ['timestamp']
-	a = pd.DataFrame(dataFull, columns = columns)
-    a = a.iloc[:, 1:512].astype(float)
-	latestSpecsDf = bucketData(a, numBuckets = 16)
-	return latestSpecsDf
+    blowerList = ['Blower '+str(i+1) for i in range(6)]
+    b = specPdf
+    dateObj = (pd.to_datetime(b['timestamp'])).dt
+    day = dateObj.day
+    month = dateObj.month
+    year = dateObj.year
+    dayVal = day + month*31 + (year-2020)*365
+    b['dayVal'] = dayVal
+    for blower in blowerList:
+        c = b.loc[b['deviceID']==blower]
+        for j,(dayVal,group) in enumerate(c.groupby('dayVal')):
+            dataMean = group.mean(axis=0).values
+            dataMean = np.concatenate((np.array([blower]), dataMean), axis=0)
+            if blower == 'Blower 1' and j==0:
+                dataFull = np.expand_dims(dataMean, axis=0)
+            else:
+                dataFull = np.concatenate((dataFull, np.expand_dims(dataMean, axis=0)), axis=0)
+                
+    #print(dataFull.shape)
+    columns = ['deviceID'] + [str(i) for i in range(512)] + ['timestamp']
+    a = pd.DataFrame(dataFull, columns = columns)
+    a = a.iloc[:, 1:512].astype(float) # to solve bug of all data being string
+    latestSpecsDf = bucketData(a, numBuckets = 16)
+    return latestSpecsDf
 
 #------------------------------------------------------------------
 # Function to output table to power the 2 simpler segments of the Dashboard
@@ -44,7 +44,7 @@ def simpleBlowerTests(startTime, endTime, vThreshDf, metaDf, durationStr):
 # print(now,rounded, roundedDayBefore, rounded4HourBefore)
     velThresh = vThreshDf.toPandas()
     metaFilt = metaDf.filter(metaDf['timestamp'] > startTime)
-#     print(metaFilt)
+    #print(metaFilt)
     metaFilt2 = metaFilt.filter(metaFilt['timestamp']<endTime)
     meta = metaFilt2.toPandas()
     hour = pd.to_datetime(meta['timestamp'])
@@ -104,8 +104,8 @@ def simpleBlowerTests(startTime, endTime, vThreshDf, metaDf, durationStr):
             anomScoreListVel[j] = 1
         else:
             anomScoreListVel[j] = 0
-
-#     print(anomScoreListVel, anomScoreListTemp)
+            
+     #print(anomScoreListVel, anomScoreListTemp)
 
 
 
@@ -114,7 +114,7 @@ def simpleBlowerTests(startTime, endTime, vThreshDf, metaDf, durationStr):
     ##########################
     donutPdf = pd.DataFrame([], columns = ['deviceID', 'timeRecord','durationStr' ,'tempGood', 'tempWarning', 'tempBad','velGood', 'velWarning', 'velBad', 'velCard', 'tempCard'])
     blowerList = ['Blower 1', 'Blower 2', 'Blower 3', 'Blower 4', 'Blower 5', 'Blower 6']
-#     timeRecord already made
+     #timeRecord already made
 
     for i, (deviceID, group) in enumerate(meta.groupby('deviceID')):
         
