@@ -32,6 +32,7 @@ def waterFallPrep(specPdf):
 	#print(dataFull.shape)
 	columns = ['deviceID'] + [str(i) for i in range(512)] + ['timestamp']
 	a = pd.DataFrame(dataFull, columns = columns)
+    a = a.iloc[:, 1:512].astype(float)
 	latestSpecsDf = bucketData(a, numBuckets = 16)
 	return latestSpecsDf
 
@@ -137,7 +138,7 @@ def simpleBlowerTests(startTime, endTime, vThreshDf, metaDf, durationStr):
         row = np.append(y, cardVals)
         rowDf = pd.DataFrame([row], columns = ['deviceID', 'timeRecord', 'durationStr','tempGood', 'tempWarning', 'tempBad','velGood', 'velWarning', 'velBad', 'velCard', 'tempCard'])
         donutPdf = donutPdf.append(rowDf)
-    donutPdf['velCard'] = pd.to_numeric(donutPdf['velCard'], downcast='float')        
+    donutPdf['velCard'] = pd.to_numeric(donutPdf['velCard'], downcast='float')      
 #     donutDf = spark.createDataFrame(donutPdf)
     return donutPdf
 
