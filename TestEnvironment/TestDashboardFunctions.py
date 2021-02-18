@@ -32,9 +32,11 @@ def waterFallPrep(specPdf):
     #print(dataFull.shape)
     columns = ['deviceID'] + [str(i) for i in range(512)] + ['timestamp']
     a = pd.DataFrame(dataFull, columns = columns)
-    a.iloc[:, 1:512] = a.iloc[:, 1:512].astype(float) # to solve bug of all data being string
     latestSpecsDf = bucketData(a, numBuckets = 16)
-    return latestSpecsDf
+    # to solve bug of all data being string
+    latestSpecsPdf = latestSpecsDf.toPandas()
+    latestSpecsPdf.iloc[:, 2:end] = latestSpecsPdf.iloc[:, 2:end].astype(float) 
+    return spark.createDataFrame(latestSpecsDf)
 
 #------------------------------------------------------------------
 # Function to output table to power the 2 simpler segments of the Dashboard
