@@ -32,7 +32,7 @@ def waterFallPrep(specPdf):
     #print(dataFull.shape)
     columns = ['deviceID'] + [str(i) for i in range(512)] + ['timestamp']
     a = pd.DataFrame(dataFull, columns = columns)
-    a = a.iloc[:, 1:512].astype(float) # to solve bug of all data being string
+    a.iloc[:, 1:512] = a.iloc[:, 1:512].astype(float) # to solve bug of all data being string
     latestSpecsDf = bucketData(a, numBuckets = 16)
     return latestSpecsDf
 
