@@ -35,7 +35,7 @@ def waterFallPrep(specPdf):
     latestSpecsDf = bucketData(a, numBuckets = 16)
     # to solve bug of all data being string
     latestSpecsPdf = latestSpecsDf.toPandas()
-    latestSpecsPdf.iloc[:, 2:end] = latestSpecsPdf.iloc[:, 2:end].astype(float) 
+    latestSpecsPdf.iloc[:, 2:17] = latestSpecsPdf.iloc[:, 2:17].astype(float) 
     return spark.createDataFrame(latestSpecsDf)
 
 #------------------------------------------------------------------
