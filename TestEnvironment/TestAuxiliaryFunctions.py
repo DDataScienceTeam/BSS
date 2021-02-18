@@ -116,8 +116,8 @@ def TableCopy(SourceTable, Database, ST_Pdf, Delete = False, Test = False):
 # Most parametres are pre-determined for the case of checking data against a 16000 battery charge, but can be changed
 #------------------------------------------------------------------------------------------------
 def CompInvalid(Df, ComparisonDf, deviceCols = 'deviceID', timestampCols = 'timestamp', ComparisonCols = 'battery', scaler = 1/1000, NegThreshold = True, Threshold = 16):
-    Pdf = Df.to_Pandas()
-    ComparisonPdf = ComparisonDf.to_Pandas()
+    Pdf = Df.toPandas()
+    ComparisonPdf = ComparisonDf.toPandas()
     ## first creating helper columns in both Pdfs
     Pdf['date'] = pd.to_datetime(Pdf[timestampCols], format="%Y-%m-%dT%H:%M:%S.%fZ").dt.date # only concerned with date not timestamp
     if 'Invalid' not in Pdf.columns:
