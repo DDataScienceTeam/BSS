@@ -116,32 +116,23 @@ def TableCopy(SourceTable, Database, ST_Pdf, Delete = False, Test = False):
 # Most parametres are pre-determined for the case of checking data against a 16000 battery charge, but can be changed
 #------------------------------------------------------------------------------------------------
 def CompInvalid(Df, ComparisonDf, deviceCols = 'deviceID', timestampCols = 'timestamp', ComparisonCols = 'battery', scaler = 1/1000, NegThreshold = True, Threshold = 16):
-    Pdf = Df.toPandas()
+    Pdf = Df.to_Pandas()
+    ComparisonPdf = ComparisonDf.to_Pandas()
+    ## first creating helper columns in both Pdfs
     Pdf['date'] = pd.to_datetime(Pdf[timestampCols], format="%Y-%m-%dT%H:%M:%S.%fZ").dt.date # only concerned with date not timestamp
     if 'Invalid' not in Pdf.columns:
         Pdf['Invalid']= 0
-        
-    ComparisonPdf = ComparisonDf.toPandas()
     ComparisonPdf['date'] = pd.to_datetime(ComparisonPdf[timestampCols], format="%Y-%m-%dT%H:%M:%S.%fZ").dt.date 
-    
     if 'Invalid' not in ComparisonPdf.columns:
-        ComparisonPdf['Invalid']= 0
-    
-    ComparisonPdf = ComparisonPdf.join(ComparisonPdf.groupby([deviceCols, 'date'])[ComparisonCols].mean(),on=[deviceCols, 'date'], rsuffix='_avg') # averages on date
-    ComparisonPdf[ComparisonCols+'_div'] = ComparisonPdf[ComparisonCols+'_avg']*scaler
-    
-    if NegThreshold==True:
-        ComparisonPdf.loc[(ComparisonPdf[ComparisonCols+'_div']<Threshold), 'Invalid'] = 1
-    elif NegThreshold==False:
-        ComparisonPdf.loc[(ComparisonPdf[ComparisonCols+'_div']>=Threshold), 'Invalid'] = 1
-    else:
-        return print('NegThreshold has an error')
-        
-    Pdf = Pdf.merge(ComparisonPdf[[deviceCols, 'date', 'Invalid']], on=[deviceCols, 'date'], how='left', suffixes=(None, '_meta'))
-    Pdf['Invalid'] = Pdf['Invalid']+Pdf['Invalid_meta']
-    Pdf = Pdf.drop(['date', 'Invalid_meta'], axis=1)
-    Output = spark.createDataFrame(Pdf)
-    return Output
+        ComparisonPdf['Invalid']= 0 
+    ## Average on dates to elimate issue of same date crossing the threshold 
+    meandat = ComparisonPdf.groupby(['deviceID','date'], as_index=False)['battery'].mean().reset_index()
+    ## Merge Pdfs for final analysis
+    Pdf = Pdf.merge(meandat, on=[deviceCols, 'date'], how='left', suffixes=(None, '_meta'))
+    ## Uses logic of abs() and NegThreshold 0 or 1 to combine both < and > in one line
+    Pdf.loc[(((Pdf['battery']*scaler < Threshold)+int(NegThreshold)-1).abs()).astype(bool),'Invalid'] = 1
+    Pdf = Pdf.drop(['date', 'index'], axis=1)
+    return spark.createDataFrame(Pdf)
 
 #-----------------------------------------------------------------------------------------------
 # Takes in a Sparks Dataframe and takes some datetime.date condition oggles if data row is valid
