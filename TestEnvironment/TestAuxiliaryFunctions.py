@@ -131,7 +131,7 @@ def CompInvalid(Df, ComparisonDf, deviceCols = 'deviceID', timestampCols = 'time
     Pdf = Pdf.merge(meandat, on=[deviceCols, 'date'], how='left', suffixes=(None, '_meta'))
     ## Uses logic of abs() and NegThreshold 0 or 1 to combine both < and > in one line
     Pdf.loc[(((Pdf['battery']*scaler < Threshold)+int(NegThreshold)-1).abs()).astype(bool),'Invalid'] = 1
-    Pdf = Pdf.drop(['date', 'index'], axis=1)
+    Pdf = Pdf.drop(['date', 'index', 'battery'], axis=1)
     return spark.createDataFrame(Pdf)
 
 #-----------------------------------------------------------------------------------------------
