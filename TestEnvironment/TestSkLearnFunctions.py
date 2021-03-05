@@ -9,7 +9,6 @@
 def gmmFit(data, numMixRange = 10, scoreToUse = 'sil', threshold=0.9, mixToUse = 0):
     scaler = dataScaler().fit(data)
     X = scaler.transform(data)
-    likelihood_threshold = np.quantile(scaler.transform(data), 1 - threshold)
     scoreList = []
     #scoreToUse = 'db' #or sil, or nothing for my old bad way 
     if scoreToUse == 'db':
@@ -49,7 +48,8 @@ def gmmFit(data, numMixRange = 10, scoreToUse = 'sil', threshold=0.9, mixToUse =
         bestMix = mixToUse
 
     clf = bestGmm
-
+    likelihood_threshold = np.quantile(clf.score_samples(X), 1 - threshold)
+    
     #Get decision Boundaries with scatter plotting
     minMax = np.array([[0,0], [10240, 6]])
     minMaxScaled = scaler.transform(minMax)
