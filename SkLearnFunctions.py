@@ -9,7 +9,6 @@
 def gmmFit(data, numMixRange = 10, scoreToUse = 'sil', threshold=0.9, mixToUse = 0):
     scaler = dataScaler().fit(data)
     X = scaler.transform(data)
-    likelihood_threshold = np.quantile(scaler.transform(data), 1 - threshold)
     scoreList = []
     #scoreToUse = 'db' #or sil, or nothing for my old bad way 
     if scoreToUse == 'db':
@@ -56,6 +55,7 @@ def gmmFit(data, numMixRange = 10, scoreToUse = 'sil', threshold=0.9, mixToUse =
     meshSize = 1000
     xx, yy = np.meshgrid(np.linspace(minMaxScaled[0,0], minMaxScaled[1,0], meshSize), np.linspace(minMaxScaled[0,1], minMaxScaled[1,1], meshSize))
     U = np.concatenate([xx[...,None],yy[...,None]],2).reshape([-1,2])
+    likelihood_threshold = np.quantile(clf.score_samples(U), 1 - threshold)
     prob_U = -clf.score_samples(U)+likelihood_threshold
     uPlot = prob_U.reshape([meshSize,meshSize])
     mask = (uPlot<0).astype(np.int)
