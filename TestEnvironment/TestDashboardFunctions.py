@@ -42,7 +42,7 @@ def waterFallPrep(specPdf):
 # Function to output table to power the 2 simpler segments of the Dashboard
 # Summary Donuts
 #-------------------------------------------------------------------
-def simpleBlowerTests(startTime, endTime, vThreshDf, metaDf, durationStr):
+def simpleBlowerTests(startTime, endTime, vThreshDf, metaDf):
 # print(now,rounded, roundedDayBefore, rounded4HourBefore)
     velThresh = vThreshDf.toPandas()
     metaFilt = metaDf.filter(metaDf['timestamp'] > startTime)
@@ -62,21 +62,14 @@ def simpleBlowerTests(startTime, endTime, vThreshDf, metaDf, durationStr):
     anomScoreListVel = [0,0,0,0,0,0]
     tempWarningVal  =7
     tempBadVal = 15
-    if durationStr == 'week':
-        velWarningVal = 5 #num of points greater than for warning/bad
-        velBadVal = 18
-        tempWarningThresh = 20
-        tempBadThresh = 35
-    else:
-        velWarningVal = 0 #num of points greater than for warning/bad
-        velBadVal = 3
-        tempWarningThresh = 1
-        tempBadThresh = 3
-        
+    #num of points greater than for warning/bad
+    velWarningVal = 1
+    velBadVal = 3
+    tempWarningThresh = 1
+    tempBadThresh = 3
         
     for hour, group in meta.groupby('hour'):
         totalMean = np.mean(group['temperature'].values)
-    #     print(totalMean)
         for j,(deviceID, smallGroup) in enumerate(group.groupby('deviceID')):
             for i in range(smallGroup.shape[0]):
                 if smallGroup.iloc[i].temperature > totalMean + tempBadVal:
@@ -106,21 +99,19 @@ def simpleBlowerTests(startTime, endTime, vThreshDf, metaDf, durationStr):
             anomScoreListVel[j] = 1
         else:
             anomScoreListVel[j] = 0
-            
-     #print(anomScoreListVel, anomScoreListTemp)
 
 
 
     ###########################
     #GET INTO DONUT FORM
     ##########################
-    donutPdf = pd.DataFrame([], columns = ['deviceID', 'timeRecord','durationStr' ,'tempGood', 'tempWarning', 'tempBad','velGood', 'velWarning', 'velBad', 'velCard', 'tempCard'])
+    donutPdf = pd.DataFrame([], columns = ['deviceID', 'timeRecord', 'tempGood', 'tempWarning', 'tempBad','velGood', 'velWarning', 'velBad', 'velCard', 'tempCard'])
     blowerList = ['Blower 1', 'Blower 2', 'Blower 3', 'Blower 4', 'Blower 5', 'Blower 6']
      #timeRecord already made
 
     for i, (deviceID, group) in enumerate(meta.groupby('deviceID')):
         
-        descript = np.array([blowerList[i], endTime, durationStr])
+        descript = np.array([blowerList[i], endTime])
         if anomScoreListVel[i] == 2:
             velArr = np.array([0,0,1])
         elif anomScoreListVel[i] == 1:
@@ -138,17 +129,16 @@ def simpleBlowerTests(startTime, endTime, vThreshDf, metaDf, durationStr):
         x = np.append(descript, tempArr)
         y = np.append(x, velArr)
         row = np.append(y, cardVals)
-        rowDf = pd.DataFrame([row], columns = ['deviceID', 'timeRecord', 'durationStr','tempGood', 'tempWarning', 'tempBad','velGood', 'velWarning', 'velBad', 'velCard', 'tempCard'])
+        rowDf = pd.DataFrame([row], columns = ['deviceID', 'timeRecord','tempGood', 'tempWarning', 'tempBad','velGood', 'velWarning', 'velBad', 'velCard', 'tempCard'])
         donutPdf = donutPdf.append(rowDf)
     donutPdf['velCard'] = pd.to_numeric(donutPdf['velCard'], downcast='float')      
-#     donutDf = spark.createDataFrame(donutPdf)
     return donutPdf
 
 
 #------------------------------------------------------------------
 # Function to output the two device health circles the Dashboard Summary
 #-------------------------------------------------------------------
-def deviceTests(startTime, endTime, metaDf, specDf,durationStr):
+def deviceTests(startTime, endTime, metaDf, specDf):
     #This function is looking for various values and comparing them to levels to attain two values: batteryHealth and ingestionHealth
     #########################################################
     #Filter and prep data
@@ -175,18 +165,11 @@ def deviceTests(startTime, endTime, metaDf, specDf,durationStr):
     #########################################################
     #Set param based on duration of analysis
     #########################################################
-    if durationStr == 'week':
-        ingestWarningThresh = 12*7
-        ingestBadThresh = 4*7
-        battThreshMid = 18
-        battThreshLow  =16
-    else:
-        ingestWarningThresh = 12
-        ingestBadThresh = 4
-        battThreshMid = 18
-        battThreshLow  =16
+    ingestWarningThresh = 12
+    ingestBadThresh = 4
+    battThreshMid = 18
+    battThreshLow  =16
 
-        
     anomScoreListIngest = []
     anomScoreListBatt = []
     lowerBound = -0.1
@@ -251,12 +234,12 @@ def deviceTests(startTime, endTime, metaDf, specDf,durationStr):
 
 
     ##########################
-    deviceDonutPdf = pd.DataFrame([], columns = ['deviceID', 'timeRecord', 'durationStr','battGood', 'battWarning', 'battBad','ingestGood', 'ingestWarning', 'ingestBad'])
+    deviceDonutPdf = pd.DataFrame([], columns = ['deviceID', 'timeRecord','battGood', 'battWarning', 'battBad','ingestGood', 'ingestWarning', 'ingestBad'])
     blowerList = ['Blower 1', 'Blower 2', 'Blower 3', 'Blower 4', 'Blower 5', 'Blower 6']
     #timeRecord already made
 
     for i in range(6):
-        descript = np.array([blowerList[i], endTime, durationStr])
+        descript = np.array([blowerList[i], endTime])
         if anomScoreListBatt[i] == 2:
             battArr = np.array([0,0,1])
         elif anomScoreListBatt[i] == 1:
@@ -273,13 +256,10 @@ def deviceTests(startTime, endTime, metaDf, specDf,durationStr):
 
         x = np.append(descript, battArr)
         row = np.append(x, ingestArr)
-        rowDf = pd.DataFrame([row], columns = ['deviceID', 'timeRecord', 'durationStr', 'battGood', 'battWarning', 'battBad','ingestGood', 'ingestWarning', 'ingestBad'])
+        rowDf = pd.DataFrame([row], columns = ['deviceID', 'timeRecord', 'battGood', 'battWarning', 'battBad','ingestGood', 'ingestWarning', 'ingestBad'])
         deviceDonutPdf = deviceDonutPdf.append(rowDf)
 
     #Add in the batt levels and data levels
-   # print([(str(round(i,1))+'V') for i in battList])
-    #print(len(battList))
-    #print(len(ingestList))
     deviceDonutPdf['BattVals'] = [(str(round(i,1))+'V') for i in battList]
     deviceDonutPdf['DataLevels'] = ingestList #ITS A COUNT
     return deviceDonutPdf
